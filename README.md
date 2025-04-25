@@ -1,6 +1,15 @@
-# Boosting Trees Implementation
+# Project 2
+
+## Boosting Trees Implementation
 
 This project implements a Gradient Boosting Trees classifier from first principles, following the methodology described in Sections 10.9-10.10 of Elements of Statistical Learning (2nd Edition). The implementation provides a robust and flexible framework for classification tasks with various tuning parameters and advanced features.
+
+## Overview
+
+The BoostingTreesClassifier is a powerful ensemble learning method that combines multiple decision trees to create a strong classifier. It works by:
+1. Building trees sequentially, where each new tree tries to correct the errors made by previous trees
+2. Using gradient descent to minimize the loss function
+3. Combining predictions from all trees with a learning rate to prevent overfitting
 
 ## What does the model you have implemented do and when should it be used?
 
@@ -29,6 +38,9 @@ The implemented model is a Gradient Boosting Trees classifier that:
    - When you want to avoid overfitting through early stopping
    - When you need to handle multi-class classification problems
    - When you want to leverage parallel processing for faster training
+   - When you have complex, non-linear relationships in your data
+   - When you need a model that can handle both numerical and categorical features
+   - When you need a model that can be tuned for different trade-offs between bias and variance
 
 ## How did you test your model to determine if it is working reasonably correctly?
 
@@ -108,6 +120,34 @@ model.plot_learning_curves()
 model.plot_feature_importance()
 ```
 
+### Advanced Usage Examples
+
+1. Using Early Stopping:
+```python
+model = BoostingTreesClassifier(
+    n_estimators=100,
+    early_stopping_rounds=5,
+    validation_fraction=0.2
+)
+```
+
+2. Using Parallel Processing:
+```python
+model = BoostingTreesClassifier(n_jobs=-1)  # Use all available processors
+```
+
+3. Using Custom Loss Function:
+```python
+def custom_loss(y_true, y_pred, return_gradient=False):
+    loss = np.mean((y_true - y_pred) ** 2)
+    if return_gradient:
+        grad = 2 * (y_pred - y_true)
+        return loss, grad
+    return loss
+
+model = BoostingTreesClassifier(custom_loss=custom_loss)
+```
+
 ## Are there specific inputs that your implementation has trouble with? Given more time, could you work around these or is it fundamental?
 
 1. **Current Limitations**:
@@ -125,6 +165,21 @@ model.plot_feature_importance()
    - Implement pruning strategies for trees
    - Add support for missing values
    - Implement more advanced feature importance methods
+
+## Project Structure
+
+```
+BoostingTrees/
+├── model/
+│   └── BoostingTrees.py        # Main model implementation
+├── test/
+│   └── test_boosting_trees.py  # Comprehensive test suite
+├── requirements.txt            # Project dependencies
+├── README_GIVEN.md            # Project documentation
+├── README.md                  # Project documentation
+├── README_analysis.md         # Analysis documentation
+└── visualizations.ipynb      # Visualizations and Graphs of Comparisons
+```
 
 ## Installation and Setup
 
@@ -155,19 +210,24 @@ pip install -r requirements.txt
 pytest BoostingTrees/test/test_boosting_trees.py -v -s
 ```
 
-## Project Structure
+5. View Analysis and Visualizations:
+```bash
+jupyter notebook visualizations.ipynb
+```
+This notebook contains detailed graphs, performance analysis, and comparisons of the model.
 
-```
-BoostingTrees/
-├── model/
-│   └── BoostingTrees.py        # Main model implementation
-├── test/
-│   └── test_boosting_trees.py  # Comprehensive test suite
-├── requirements.txt            # Project dependencies
-├── README_GIVEN.md             # Project documentation
-├── README.md                   # Project documentation
-└── visualizations.ipynb        # Visualizations and Graphs of Comparisons
-```
+## Parameters and Usage
+
+### Key Parameters
+
+1. `n_estimators` (default=100): Number of boosting stages
+2. `learning_rate` (default=0.1): Shrinks the contribution of each tree
+3. `max_depth` (default=3): Maximum depth of individual trees
+4. `min_samples_split` (default=2): Minimum samples required to split a node
+5. `early_stopping_rounds` (default=5): Number of rounds without improvement to stop
+6. `validation_fraction` (default=0.1): Fraction of training data for validation
+7. `n_jobs` (default=-1): Number of parallel jobs (-1 means all processors)
+8. `custom_loss` (default=None): Optional custom loss function
 
 ## Model Implementation Details
 
